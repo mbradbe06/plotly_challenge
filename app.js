@@ -1,6 +1,6 @@
 //default plot for page with subject 940 info
 function init() {
-    d3.json('../samples.json').then(data => {
+    d3.json('data/samples.json').then(data => {
         // console.log(data.samples[0]);
         
         //locate test subject 940 and create h-bar-chart with sample_values as values for chart
@@ -29,14 +29,14 @@ function init() {
           });
         
         //format into horizontal bar chart  
-        const trace = {
+        let trace = {
             x: sampleValues.reverse(),
             y: yGenus.reverse(),
             type : 'bar',
             orientation : 'h'
           };
       
-        const layout = {
+        let layout = {
             title : 'Top 10 Bacteria - Selected Subject',
             xaxis : {automargin:true},
             yaxis : {automargin:true,
@@ -46,10 +46,9 @@ function init() {
       
         Plotly.newPlot("bar1", [trace], layout);
           
-      });
+
       
-      //aggregate bar chart of 
-      d3.json('../samples.json').then(data => {
+      //aggregate bar chart of subjects
       
         const otuCounts = data.samples.map( d => d.sample_values.map(d => d)).flat();
       
@@ -101,14 +100,14 @@ function init() {
         // console.log(topAggFinal.map(d=> d.count));
       
           //format into horizontal bar chart  
-        const trace = {
+        trace = {
             x: topAggFinal.map(d=> d.count).reverse(),
             y: topAggFinal.map(d=> `${d.id}: ${d.genus}`).reverse(),
             type : 'bar',
             orientation : 'h'
           };
       
-          const layout = {
+        layout = {
             title : 'Top 10 Bacteria - All Subjects',
             xaxis : {automargin:true},
             yaxis : {automargin:true,
@@ -118,14 +117,12 @@ function init() {
       
         Plotly.newPlot("bar2", [trace], layout);
       
-        });
-      
-      d3.json('../samples.json').then(data => {
+        
           
           //locate test subject 940 and create bubble chart with agg sample_values as values for chart
           //and out_family agg as y-labels
           //first filter to locate sample info for subject 940
-        const sampleSelection = data.samples.filter(sample => sample.id === '940')[0];
+          // const sampleSelection = data.samples.filter(sample => sample.id === '940')[0];
           //generate family otu_labels
         const getFamily = sampleSelection.otu_labels.map( d => d.split(';'));
         // console.log(getFamily);
@@ -177,19 +174,17 @@ function init() {
             }
           };
           
-        var layout = {
+        layout = {
           title: 'Count of Bacteria by Family - Selected Subject',
           margin :{l : 450},
           yaxis : {tickfont : {size:10}},
           };
           
           Plotly.newPlot('bubble', [trace1], layout);  
-      });
       
       
       //populate Demographic Info table
       function buildInfo() {
-        d3.json('../samples.json').then(data => { 
           const metaData = data.metadata.filter(data => data.id.toString() === '940')[0];
           // console.log(metaData);
           let keys = Object.keys(metaData).map( d => d );
@@ -203,15 +198,15 @@ function init() {
             Info.append('p')
                 .html(`<b>${keys[i].toUpperCase()}</b> : ${values[i]}`);
           }    
-        });
       }
       
       
       buildInfo();
-
+  });
 }
+
 //read in data again
-d3.json('../samples.json').then((data,i) => {
+d3.json('data/samples.json').then((data,i) => {
 //create dropdown menu and options
   const subjects = data.names;
   const dropDownOptions = d3.select('#selDataset');
@@ -306,7 +301,7 @@ d3.json('../samples.json').then((data,i) => {
             }
           };
           
-        var layout = {
+        let layout = {
           title: 'Count of Bacteria by Family - Selected Subject',
           margin :{l : 450},
           yaxis : {tickfont : {size:10}},
@@ -336,17 +331,16 @@ d3.json('../samples.json').then((data,i) => {
             Info.append('p')
                 .html(`<b>${keys[i].toUpperCase()}</b> : ${values[i]}`);
           }    
-        };
+        
       
       
       
     //   updateInfo();
-         
+    }      
     
-    // }
+
              
 });
-
 
 
 init();
